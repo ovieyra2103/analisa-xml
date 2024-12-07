@@ -1,0 +1,56 @@
+<div class="container">
+    <h1>Analizador CFDIs 2.0</h1>
+    
+    <!-- Botón para cargar XML -->
+    <button id="uploadXmlBtn" class="btn btn-primary margenb" @click="cargarXml">Cargar XML</button>
+    <input type="file" id="uploadXmlInput" multiple hidden @change="procesarXml">
+    
+    <div id="app">
+        <!-- Tabla de Totales -->
+        <table class="table table-striped table-bordered table-hover margenb" id="totales">
+            <tbody>
+                <tr><th>Cantidad de Archivos</th><td>{{cantidad}}</td></tr>
+                <tr><th>Total Global</th><td>${{total_suma.toFixed(2)}}</td></tr>
+                <tr><th>Total IVA</th><td>${{total_iva.toFixed(2)}}</td></tr>
+                <tr><th>Total IEPS</th><td>${{total_ieps.toFixed(2)}}</td></tr>
+            </tbody>
+        </table>
+
+        <!-- Tabla de Detalle -->
+        <table class="table table-striped table-bordered table-hover" id="tabla">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Folio</th>
+                    <th>RFC Receptor</th>
+                    <th>Nombre Receptor</th>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio Unitario</th>
+                    <th>Importe</th>
+                    <th>IVA</th>
+                    <th>IEPS</th>
+                    <th>Otros Impuestos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="concepto in conceptos">
+                    <td>{{concepto.fecha}}</td>
+                    <td>{{concepto.folio}}</td>
+                    <td>{{concepto.rfcReceptor}}</td>
+                    <td>{{concepto.nombreReceptor}}</td>
+                    <td>{{concepto.cantidad}}</td>
+                    <td>{{concepto.descripcion}}</td>
+                    <td>${{concepto.precioUnitario.toFixed(2)}}</td>
+                    <td>${{concepto.importe.toFixed(2)}}</td>
+                    <td>${{concepto.iva.toFixed(2)}}</td>
+                    <td>${{concepto.ieps.toFixed(2)}}</td>
+                    <td>${{concepto.otrosImpuestos.toFixed(2)}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Botón de Exportar a Excel -->
+        <button id="downloadXlsxBtn" class="btn btn-success" @click="exportarExcel">Descargar en XLSX</button>
+    </div>
+</div>
