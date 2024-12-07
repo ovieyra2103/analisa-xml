@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de CFDIs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #2196F3;
+            --secondary: #FFC107;
+            --error: #f44336;
+            --success: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #333;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .file-list {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: var(--error);
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Análisis de CFDIs</h1>
+        
+        <div class="actions">
+            <input type="file" id="xmlInput" multiple accept=".xml" style="display: none">
+            <button class="btn btn-primary" onclick="document.getElementById('xmlInput').click()">
+                📁 Cargar XML
+            </button>
+            <button class="btn btn-secondary" onclick="exportToExcel()" id="exportBtn" disabled>
+                📊 Exportar a Excel
+            </button>
+        </div>
+
+        <div id="fileList" class="file-list" style="display: none">
+            <h3>Archivos cargados:</h3>
+        </div>
+
+        <div id="alert"></div>
+
+        <div class="table-container">
+            <table id="cfdiTable">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Folio</th>
+                        <th>RFC Receptor</th>
+                        <th>Nombre Receptor</th>
+                        <th>Cantidad</th>
+                        <th>Descripción</th>
+                        <th>Precio Unit.</th>
+                        <th>Importe</th>
+                        <th>IVA</th>
+                        <th>IEPS</th>
+                        <th>Otros Imp.</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let processedData = [];
+
+        document.getElementById('xmlInput').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const fileList = document.getElementById('fileList');
+            fileList.style.display = 'block';
+            fileList.innerHTML = '<h3>Archivos cargados:</h3>';
+
+            processedData = [];
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => processXML(e.target.result, file.name);
+                reader.readAsText(file);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `<span>${file.name}</span>`;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function processXML(xmlContent, fileName) {
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlContent, "text/xml");
+                
+                // Simular extracción de datos del XML
+                const mockData = {
+                    fecha: "2023-11-15",
+                    folio: "A-123456",
+                    rfcReceptor: "XAXX010101000",
+                    nombreReceptor: "Cliente Ejemplo SA de CV",
+                    conceptos: [
+                        {
+                            cantidad: 2,
+                            descripcion: "Producto 1",
+                            precioUnitario: 1000.00,
+                            importe: 2000.00,
+                            iva: 320.00,
+                            ieps: 0,
+                            otrosImp: 0
+                        }
+                    ]
+                };
+
+                processedData.push(mockData);
+                updateTable();
+                showAlert('Archivo procesado correctamente', 'success');
+                document.getElementById('exportBtn').disabled = false;
+            } catch (error) {
+                showAlert('Error al procesar el archivo: ' + error.message, 'error');
+            }
+        }
+
+        function updateTable() {
+            const tbody = document.querySelector('#cfdiTable tbody');
+            tbody.innerHTML = '';
+
+            processedData.forEach(cfdi => {
+                cfdi.conceptos.forEach(concepto => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${cfdi.fecha}</td>
+                        <td>${cfdi.folio}</td>
+                        <td>${cfdi.rfcReceptor}</td>
+                        <td>${cfdi.nombreReceptor}</td>
+                        <td>${concepto.cantidad}</td>
+                        <td>${concepto.descripcion}</td>
+                        <td>$${concepto.precioUnitario.toFixed(2)}</td>
+                        <td>$${concepto.importe.toFixed(2)}</td>
+                        <td>$${concepto.iva.toFixed(2)}</td>
+                        <td>$${concepto.ieps.toFixed(2)}</td>
+                        <td>$${concepto.otrosImp.toFixed(2)}</td>
+                        <td>$${(concepto.importe + concepto.iva + concepto.ieps + concepto.otrosImp).toFixed(2)}</td>
+                    `;
+                });
+            });
+        }
+
+        function exportToExcel() {
+            const ws = XLSX.utils.table_to_sheet(document.getElementById('cfdiTable'));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "CFDIs");
+            XLSX.writeFile(wb, "CFDIs_Analysis.xlsx");
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            setTimeout(() => alertDiv.className = '', 3000);
+        }
+    </script>
+</body>
+</html>
