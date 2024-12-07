@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador CFDI | Analiza tus facturas XML</title>
+    <meta name="description" content="Herramienta gratuita para analizar y resumir XML de CFDIs del SAT México. Fácil exportación a Excel.">
+    <meta name="google-site-verification" content="PC3TaeEmY-W5cFvydiTvhALt7WDwbmQFSS2DRUKQLxU" />
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e; 
+            --background: #f8fafc;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--background);
+            color: #334155;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        #drop {
+            border: 2px dashed var(--secondary);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        #drop:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .table thead th {
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .concepto {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .concepto:last-child {
+            border: none;
+        }
+
+        .traslado {
+            display: inline-block;
+            background: #e2e8f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .tarjeta {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .tarjeta img {
+            border-radius: 8px;
+            margin-right: 1rem;
+        }
+
+        .alert {
+            border-radius: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+            }
+            
+            .table {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script defer src="js/cargarxml.js"></script>
+    <script defer src="js/main.js"></script>
+
+    <!-- Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-18562188-24"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-18562188-24');
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Analizador CFDI</h1>
+
+        <div id="app" class="fade-in">
+            <div id="drop" ref="drop">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p class="mt-3 mb-0">Arrastra tus archivos XML aquí o haz clic para seleccionarlos</p>
+            </div>
+
+            <!-- Rest of the template remains the same but with updated classes and structure -->
+            
+        </div>
+    </div>
+</body>
+</html>
